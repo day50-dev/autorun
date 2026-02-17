@@ -197,7 +197,16 @@ Here is the README:
     import json
     try:
         result = json.loads(content)
-        return result.get("language", ""), result.get("install", ""), result.get("run", "")
+        language = result.get("language", "").strip()
+        install = result.get("install", "").strip()
+        run = result.get("run", "").strip()
+        
+        if not language and not install and not run:
+            print("AI could not determine how to run this project")
+            print(f"Response: {content}")
+            sys.exit(1)
+        
+        return language, install, run
     except json.JSONDecodeError as e:
         print(f"Failed to parse AI response: {e}")
         print(f"Content was: {content}")
