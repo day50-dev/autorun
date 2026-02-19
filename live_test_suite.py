@@ -27,7 +27,7 @@ TEST_REPOS = [
 
 
 class LiveTestRunner:
-    def __init__(self, test_dir: str = "/tmp/runthis_live_tests"):
+    def __init__(self, test_dir: str = "/tmp/autorun_live_tests"):
         self.test_dir = Path(test_dir)
         self.results: List[Dict] = []
         
@@ -56,8 +56,8 @@ class LiveTestRunner:
         except Exception as e:
             return False, repo_dir
     
-    def test_runthis_cli(self, repo: Dict) -> Dict:
-        """Test runthis CLI with a repo - returns what would happen without executing"""
+    def test_autorun_cli(self, repo: Dict) -> Dict:
+        """Test autorun CLI with a repo - returns what would happen without executing"""
         print(f"\nTesting {repo['name']}...")
         
         result = {
