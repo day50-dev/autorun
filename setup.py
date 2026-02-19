@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="runthis",
+    name="autorun",
     version="1.0.0",
     description="Run code from GitHub in one command",
-    author="RunThis",
+    author="Autorun",
     packages=find_packages(),
     install_requires=[
         "requests>=2.31.0",
@@ -12,7 +12,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "runthis=runthis.cli:main",
+            "autorun=autorun.cli:main",
         ],
     },
     python_requires=">=3.8",

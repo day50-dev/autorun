@@ -1,6 +1,6 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/575fd0a0-18e5-4b24-8077-4790bcd1bbbc">
-</p>
+   <img src="https://github.com/user-attachments/assets/575fd0a0-18e5-4b24-8077-4790bcd1bbbc">
+ </p>
 
 Run code from GitHub in one command.
 
@@ -31,7 +31,7 @@ cache_dir=$HOME/autorun  # defaults to $HOME/autorun
 
 ## Directory Structure
 
-RunThis creates the following directories in `~/.autorun` (or your configured `cache_dir`):
+Autorun creates the following directories in `~/.autorun` (or your configured `cache_dir`):
 
 - `~/.autorun/pkgs/` - Where repositories are cloned
 - `~/.autorun/bin/` - Executables from builds

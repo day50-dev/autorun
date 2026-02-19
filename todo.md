@@ -1,4 +1,4 @@
-# RunThis TODO
+# Autorun TODO
 
 ## Completed
 
@@ -6,15 +6,15 @@
 - CLI implementation with argparse
 - GitHub repository cloning
 - README reading and AI analysis
-- Configuration file management (~/.config/runthis)
+- Configuration file management (~/.config/autorun)
 - Interactive config prompting on first run
 - Dependency installation (pip, npm, make, etc.)
 - Project running
 - Directory structure reorganization:
-  - $HOME/runthis/pkgs/ - cloned repositories
-  - $HOME/runthis/bin/ - executables
-  - $HOME/runthis/lib/ - libraries
-  - $HOME/runthis/include/ - headers
+  - $HOME/autorun/pkgs/ - cloned repositories
+  - $HOME/autorun/bin/ - executables
+  - $HOME/autorun/lib/ - libraries
+  - $HOME/autorun/include/ - headers
 - Auto-fix feature: On run failure, asks AI for fixes (up to 3 tries)
 - Error handling for HTML responses from API
 - Verbose mode for debugging

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Live Test Suite - Test actual runthis CLI with trending repos
+Live Test Suite - Test actual autorun CLI with trending repos
 Tests both success and failure modes
 """
 
