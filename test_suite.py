@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-RunThis Test Suite - Dry-run testing
+Autorun Test Suite - Dry-run testing
 Tests trending GitHub repositories without actual installation/execution
 
 Test 1: Analyze repo README and generate action plan (no execution)
@@ -31,7 +31,7 @@ TEST_REPOS = [
 
 
 class TestRunner:
-    def __init__(self, test_dir: str = "/tmp/runthis_tests"):
+    def __init__(self, test_dir: str = "/tmp/autorun_tests"):
         self.test_dir = Path(test_dir)
         self.results: List[Dict] = []
         
@@ -222,7 +222,7 @@ class TestRunner:
     
     def print_report(self, report: Dict) -> None:
         print("\n" + "=" * 60)
-        print("RunThis Test Suite Report")
+        print("Autorun Test Suite Report")
         print("=" * 60)
         print(f"Timestamp: {report['timestamp']}")
         print(f"Total Repos: {report['total_repos']}")

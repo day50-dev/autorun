@@ -34,7 +34,7 @@
 
 - Better error messages for missing system dependencies
 - Check for sudo available before attempting apt-get
-- Add command to copy built binaries to $HOME/runthis/bin/
+- Add command to copy built binaries to $HOME/autorun/bin/
 - Cache AI responses for common project types
 - Support for more package managers (conda, cargo, go get, etc.)
 - Add --dry-run flag to show what would be done

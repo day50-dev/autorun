@@ -1,4 +1,4 @@
 include README.md
 include LICENSE
 include requirements.txt
-recursive-include runthis *.py
+recursive-include autorun *.py

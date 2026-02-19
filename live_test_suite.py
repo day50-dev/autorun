@@ -96,7 +96,7 @@ class LiveTestRunner:
             if not found:
                 result["would_readme"] = "No README found"
                 result["failure_mode"] = True
-                result["failure_reason"] = "No README found - runthis would exit with code 1"
+                result["failure_reason"] = "No README found - autorun would exit with code 1"
         
         # Would detect dependencies
         deps = {
@@ -138,12 +138,12 @@ class LiveTestRunner:
         # Check for failure modes
         if result["would_readme"] == "No README found":
             result["failure_mode"] = True
-            result["failure_reason"] = "No README found - runthis would exit with code 1"
+            result["failure_reason"] = "No README found - autorun would exit with code 1"
         
         # Test: What if AI returns empty response?
         # This tests the failure mode we just added to cli.py
         if result["would_readme"] and not detected_deps:
-            # In real scenario, runthis would ask AI which might fail
+            # In real scenario, autorun would ask AI which might fail
             result["would_ask_ai"]["ai_response"] = "Unable to determine how to run this project"
             result["would_ask_ai"]["would_fail"] = True
             result["would_ask_ai"]["failure_message"] = "AI could not determine action - would exit gracefully"
@@ -156,11 +156,11 @@ class LiveTestRunner:
         self.setup()
         
         print(f"Running live tests on {len(TEST_REPOS)} trending repositories...")
-        print("This tests the runthis CLI logic WITHOUT actually running/installing anything")
+        print("This tests the autorun CLI logic WITHOUT actually running/installing anything")
         print("(Dry-run mode)")
         
         for repo in TEST_REPOS:
-            result = self.test_runthis_cli(repo)
+            result = self.test_autorun_cli(repo)
             self.results.append(result)
             
             repo_name = repo["name"].replace("/", "_")
@@ -199,7 +199,7 @@ class LiveTestRunner:
     
     def print_report(self, report: Dict) -> None:
         print("\n" + "=" * 70)
-        print("RunThis Live Test Suite Report (Dry-Run Mode)")
+        print("Autorun Live Test Suite Report (Dry-Run Mode)")
         print("=" * 70)
         print(f"Timestamp: {report['timestamp']}")
         print(f"Total Repos Tested: {report['total_repos']}")
