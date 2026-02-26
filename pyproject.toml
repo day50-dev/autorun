@@ -3,10 +3,10 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "autorun"
+name = "haberdash"
 version = "0.0.1"
 description = "Run code from GitHub in one command"
-authors = [{name = "Autorun"}]
+authors = [{name = "Haberdash"}]
 requires-python = ">=3.8"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -24,7 +24,7 @@ dependencies = [
 ]
 
 [project.scripts]
-autorun = "autorun.cli:main"
+haby = "haberdash.cli:main"
 
 [tool.setuptools]
-packages = ["autorun"]
+packages = ["haberdash"]

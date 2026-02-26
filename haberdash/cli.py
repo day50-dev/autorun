@@ -14,11 +14,11 @@ except ImportError:
     print("Required dependencies not installed. Run: pip install requests")
     sys.exit(1)
 
-import autorun
+import haberdash
 
 
 def prompt_for_config() -> dict:
-    print("Welcome to Autorun! Let's set up your configuration.")
+    print("Welcome to Haberdash! Let's set up your configuration.")
     print()
     
     config = {}
@@ -34,10 +34,10 @@ def prompt_for_config() -> dict:
         key = input("API key (required): ").strip()
     config["key"] = key
     
-    cache_dir = input(f"Directory to store cloned repos and builds [{Path.home()/'autorun'}]: ").strip()
-    config["cache_dir"] = cache_dir or str(Path.home() / "autorun")
+    cache_dir = input(f"Directory to store cloned repos and builds [{Path.home()/'haberdash'}]: ").strip()
+    config["cache_dir"] = cache_dir or str(Path.home() / "haberdash")
     
-    config_path = Path.home() / ".config" / "autorun"
+    config_path = Path.home() / ".config" / "haberdash"
     config_path.parent.mkdir(parents=True, exist_ok=True)
     
     with open(config_path, "w") as f:
@@ -48,13 +48,13 @@ def prompt_for_config() -> dict:
     
     print(f"\nConfig saved to {config_path}")
     print(f"Creating directory structure at {config['cache_dir']}")
-    setup_autorun_dirs(config["cache_dir"])
+    setup_haberdash_dirs(config["cache_dir"])
     
     return config
 
 
 def get_config() -> dict:
-    config_path = Path.home() / ".config" / "autorun"
+    config_path = Path.home() / ".config" / "haberdash"
     if not config_path.exists():
         return prompt_for_config()
     
@@ -75,7 +75,7 @@ def get_config() -> dict:
     return config
 
 
-def setup_autorun_dirs(cache_dir: str):
+def setup_haberdash_dirs(cache_dir: str):
     base_dir = Path(cache_dir)
     (base_dir / "pkgs").mkdir(parents=True, exist_ok=True)
     (base_dir / "bin").mkdir(parents=True, exist_ok=True)
@@ -92,7 +92,7 @@ def clone_repo(url: str, config: dict) -> Tuple[str, str]:
     user, repo = match.groups()
     git_url = f"https://github.com/{user}/{repo}.git"
     
-    setup_autorun_dirs(config["cache_dir"])
+    setup_haberdash_dirs(config["cache_dir"])
     
     pkgs_dir = Path(config["cache_dir"]) / "pkgs"
     repo_path = pkgs_dir / repo
@@ -311,7 +311,7 @@ Return empty arrays if not applicable."""
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run code from GitHub in one command (Autorun)")
+    parser = argparse.ArgumentParser(description="Run code from GitHub in one command (Haberdash)")
     parser.add_argument("url", help="GitHub repository URL")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
     parser.add_argument("--no-install", action="store_true", help="Skip installing dependencies")
