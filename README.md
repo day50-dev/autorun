@@ -1,6 +1,9 @@
 <p align="center">
-   <img src="https://github.com/user-attachments/assets/575fd0a0-18e5-4b24-8077-4790bcd1bbbc">
-  </p>
+   <img width="500" height="160" alt="haberdash_500" src="https://github.com/user-attachments/assets/9122b177-3542-4b68-8bcf-0e1dd55cb7fc" />
+   <br/>
+   <a href=https://pypi.org/project/haberdash><img src=https://badge.fury.io/py/haberdash.svg/></a>
+   <br/>
+ </p>
 
 A runtime for AI agents to execute software with security policies.
 
