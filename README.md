@@ -1,8 +1,8 @@
 <p align="center">
-   <img src="https://github.com/user-attachments/assets/575fd0a0-18e5-4b24-8077-4790bcd1bbbc">
+   <img width="500" height="160" alt="haberdash_500" src="https://github.com/user-attachments/assets/9122b177-3542-4b68-8bcf-0e1dd55cb7fc" />
  </p>
 
-Run code from GitHub in one command.
+Make an agent run software according to your personal security policies
 
 ## What It Does
 
