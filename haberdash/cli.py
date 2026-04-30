@@ -872,9 +872,52 @@ def main():
     
     # Check if url is a macro name (no slashes, no dots)
     if args.url and '/' not in args.url and '.' not in args.url:
-        from haberdash.macros import run_macro
-        success = run_macro(args.url, args.verbose, args.guard)
-        if success:
+        from haberdash.macros import load_macro
+        result = load_macro(args.url)
+        if result:
+            macro, path = result
+            print(f"\n--- Applying Skill: {macro['name']} ---")
+            print(f"Description: {macro['description']}")
+            print("Establish context in the subshell, then exit to complete.\n")
+            
+            # Record session
+            transcript, commands = record_shell_session(config, args.verbose)
+            
+            # Analyze with macro context
+            with open(path) as f:
+                macro_content = f.read()
+            
+            print("Analyzing context...")
+            analysis = analyze_macro(config, transcript, commands, args.verbose, macro_context=macro_content)
+            
+            # Show analysis and ask to proceed
+            task_summary = analysis.get("task_summary", "unknown task")
+            print(f"\nDetected intent: {task_summary}")
+            if analysis.get("explanation"):
+                print(f"Plan: {analysis['explanation']}")
+            
+            completion_cmds = analysis.get("completion_commands", [])
+            if completion_cmds:
+                print("\nCommands to finish:")
+                for cmd in completion_cmds:
+                    print(f"  $ {cmd}")
+                print()
+                
+                response = input("Execute? (y/n/e[edit]): ").lower().strip()
+                if response == 'y':
+                    execute_macro(config, analysis, args.verbose, ".", args.guard, args.docker_image, args.chroot_root)
+                elif response == 'e':
+                    print("\nEnter commands (empty line to finish):")
+                    edited_cmds = []
+                    while True:
+                        cmd = input("$ ").strip()
+                        if not cmd: break
+                        edited_cmds.append(cmd)
+                    if edited_cmds:
+                        analysis["completion_commands"] = edited_cmds
+                        execute_macro(config, analysis, args.verbose, ".", args.guard, args.docker_image, args.chroot_root)
+            else:
+                print("\nAI did not suggest any completion commands.")
             return
         # If not found, fall through to treat as URL
     
