@@ -1,44 +1,27 @@
-# Autorun TODO
+# Haberdash TODO
 
 ## Completed
 
-- Project structure setup
-- CLI implementation with argparse
-- GitHub repository cloning
-- README reading and AI analysis
-- Configuration file management (~/.config/autorun)
-- Interactive config prompting on first run
-- Dependency installation (pip, npm, make, etc.)
-- Project running
-- Directory structure reorganization:
-  - $HOME/autorun/pkgs/ - cloned repositories
-  - $HOME/autorun/bin/ - executables
-  - $HOME/autorun/lib/ - libraries
-  - $HOME/autorun/include/ - headers
-- Auto-fix feature: On run failure, asks AI for fixes (up to 3 tries)
-- Error handling for HTML responses from API
-- Verbose mode for debugging
-- --no-install flag option
-- README documentation updates
-- setup.py for packaging
-- .gitignore
+- Pivot to **Macro Skill Mode**: `haby <skill>` opens a subshell for context.
+- Modernized configuration with **TOML** (`~/.config/haberdash/config.toml`).
+- Macro management CLI: `-l`, `--show`, `--edit`, `--delete`.
+- Pre-flight AI connectivity checks to protect user effort.
+- Isolated execution guards (`chroot`, `docker`).
+- Project-isolated answer storage in `~/.config/haberdash/answers/`.
+- Migrated all state out of the workspace (`.haby` removed).
+- Updated README to reflect "Skills" philosophy.
+- Support for local models (Ollama, llama.cpp) via optional API keys.
 
-## Known Issues
+## Active Tasks
 
-- sudo apt-get install commands fail without password prompt in subprocess
-   - Need to pre-install system dependencies separately
-- AI prompts may need refinement for better error detection
-- No cleanup of failed build artifacts
+- [ ] Refine AI prompts for "next token" completion logic.
+- [ ] Add `haby record <name>` to easily create new skill manifests from a session.
+- [ ] Improve handling of multi-step execution logic in macros.
 
 ## Future Enhancements
 
-- Better error messages for missing system dependencies
-- Check for sudo available before attempting apt-get
-- Add command to copy built binaries to $HOME/autorun/bin/
-- Cache AI responses for common project types
-- Support for more package managers (conda, cargo, go get, etc.)
-- Add --dry-run flag to show what would be done
-- Add --clean flag to remove cloned repos
-- Add list command to show installed packages
-- Better handling of non-zero exit codes that are actually expected
-- Add tests
+- [ ] "Skill Discovery": Search for and download skills from a central registry.
+- [ ] Better error recovery if a suggested completion command fails.
+- [ ] Support for piped input into skills.
+- [ ] Visual progress indicators for AI analysis.
+- [ ] Comprehensive test suite for the new macro engine.

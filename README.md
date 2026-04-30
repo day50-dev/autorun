@@ -7,15 +7,24 @@
 
 # Haberdash (`haby`)
 
-Haberdash is an AI-driven shell assistant that treats automation as **Skills**. Instead of rigid scripts, Haberdash uses Markdown-based macros that observe your context in a subshell and use AI to complete the task.
+Haberdash is a **runtime for agentic instructions**. 
+
+The core insight of Haberdash is that **cloning a repository** and **running a macro** are fundamentally the same operation: applying agentic intent to a specific context (a README file or a live Shell session).
+
+## Unified Instruction Runtime
+
+Haberdash treats every task as an instruction set applied to context:
+
+- **Static Instructions (Repo Mode):** Give `haby` a GitHub URL. It treats the README as the instruction set and the repository as the context to build and run the software.
+- **Dynamic Instructions (Skill Mode):** Give `haby` a skill name. It treats the Markdown Macro as the instruction set and your live subshell session as the context to complete the task.
 
 ## Key Features
 
-- **Skill Mode:** Run `haby <skill>`, establish context in a subshell (e.g., `git log`, `npm test`), and let AI determine the "next token" of commands to finish the job.
-- **Markdown Macros:** Define automation logic in simple Markdown files.
-- **Zero Workspace Clutter:** All configuration, macros, and project-isolated state are stored in `~/.config/haberdash`.
-- **Pre-flight Checks:** Verifies AI connectivity *before* you start working to protect your manual effort.
-- **Isolated Execution:** Optional `chroot` or `docker` guards for safe command execution.
+- **Agentic Automation:** Whether it's a README or a Macro, `haby` uses AI to determine the "next token" of commands needed for success.
+- **Skill-Based Workflow:** Run `haby <skill>`, establish context in a subshell, and let AI finish the job.
+- **Zero Workspace Clutter:** Internal state, macros, and project-isolated answers are stored in `~/.config/haberdash`.
+- **Pre-flight Safety:** Connectivity checks protect your manual effort before you start working.
+- **Guard Rails:** Optional `chroot` or `docker` isolation for all command execution.
 
 ## Installation
 
@@ -25,49 +34,30 @@ pip install haberdash
 
 ## Quick Start
 
-### 1. Configure
-On first run, `haby` will prompt for your OpenAI-compatible API settings (works great with local models like Ollama/llama.cpp).
+### 1. Static Instructions: Run a Repo
+`haby` clones the repo, analyzes the README, and executes the build/run plan.
 ```bash
-haby config  # Open config.toml in your editor anytime
+haby https://github.com/user/repo
 ```
 
-### 2. List & Manage Skills
-```bash
-haby -l              # List available skills
-haby --show bisect   # View skill details and logic
-haby --edit bisect   # Edit the skill's markdown manifest
-```
-
-### 3. Run a Skill
-Apply a skill to your current workspace:
+### 2. Dynamic Instructions: Apply a Skill
+`haby` opens a subshell for you to provide live context, then completes the plan based on the skill manifest.
 ```bash
 haby bisect
 ```
-1. A subshell opens.
-2. Perform your preparation (e.g., `git bisect start`, find a good commit).
-3. `exit` the subshell.
-4. AI analyzes your session and the `bisect` skill to suggest the completion commands.
 
-## How Skills Work
-
-Skills are defined as Markdown files in `~/.config/haberdash/macros/`. They include:
-- **Detection:** Automatic variable setting based on files or previous answers.
-- **Questions:** Interactive prompts for missing context.
-- **Execution:** Conditional or looped shell commands.
-
-Example `bisect.md`:
-```markdown
-# Bisect
-Find the commit that introduced a bug.
-
-## Ask
-- **test_cmd**: "What command runs the failing test?"
-  - Default: npm test
-
-## Execute
-1. git bisect run ${test_cmd}
-2. git bisect reset
+### 3. Manage Instructions
+```bash
+haby -l              # List available skills
+haby config          # Edit your TOML configuration
 ```
+
+## How Instructions are Structured
+
+Instructions are defined in Markdown. Whether it's a README it's parsing on the fly or a local `.md` skill, the structure is the same:
+- **Detection:** What environment variables or files are needed?
+- **Interaction:** What context is missing from the user?
+- **Execution:** What is the specific command sequence to achieve the goal?
 
 ## License
 
