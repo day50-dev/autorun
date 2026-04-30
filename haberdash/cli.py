@@ -536,8 +536,42 @@ def execute_macro(config: dict, analysis: Dict[str, Any], verbose: bool, working
                 break
 
 
+def test_ai_connection(config: dict) -> Tuple[bool, str]:
+    """Test connectivity to the AI model."""
+    base_url = config['openai_base_url'].rstrip('/')
+    endpoint = f"{base_url}/chat/completions"
+    
+    try:
+        response = requests.post(
+            endpoint,
+            headers={
+                "Authorization": f"Bearer {config['key']}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": config["model"],
+                "messages": [{"role": "user", "content": "ping"}],
+                "max_tokens": 1
+            },
+            timeout=5
+        )
+        response.raise_for_status()
+        return True, "Success"
+    except Exception as e:
+        return False, str(e)
+
+
 def run_macro_mode(config: dict, verbose: bool, guard: Optional[str] = None, docker_image: str = "alpine:latest", chroot_root: str = "/tmp/haberdash-chroot", save_name: Optional[str] = None):
     """Run the macro recording and execution mode."""
+    # Pre-flight check
+    print("Checking AI connectivity...")
+    ok, error = test_ai_connection(config)
+    if not ok:
+        print(f"Warning: AI connection test failed: {error}")
+        response = input("Do you want to proceed anyway? (y/n): ").lower().strip()
+        if response != 'y':
+            return
+
     transcript, commands = record_shell_session(config, verbose)
     
     if not commands:
@@ -876,6 +910,16 @@ def main():
         result = load_macro(args.url)
         if result:
             macro, path = result
+            
+            # Pre-flight check
+            print("Checking AI connectivity...")
+            ok, error = test_ai_connection(config)
+            if not ok:
+                print(f"Warning: AI connection test failed: {error}")
+                choice = input("Proceed anyway? (y/n): ").lower().strip()
+                if choice != 'y':
+                    return
+            
             print(f"\n--- Applying Skill: {macro['name']} ---")
             print(f"Description: {macro['description']}")
             print("Establish context in the subshell, then exit to complete.\n")
