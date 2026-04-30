@@ -436,12 +436,18 @@ def record_shell_session(config: dict, verbose: bool) -> Tuple[str, List[str]]:
     return full_transcript, commands
 
 
-def analyze_macro(config: dict, transcript: str, commands: List[str], verbose: bool) -> Dict[str, Any]:
-    """Ask AI what the user was trying to accomplish."""
+def analyze_macro(config: dict, transcript: str, commands: List[str], verbose: bool, macro_context: Optional[str] = None) -> Dict[str, Any]:
+    """Ask AI what the user was trying to accomplish, with optional macro context."""
+    
+    macro_info = ""
+    if macro_context:
+        macro_info = f"\nThis session is applying a specific 'skill' or 'macro' defined as follows:\n{macro_context}\n"
     
     prompt = f"""You are an expert at understanding command-line workflows.
 
-I recorded a user working in a shell. I need you to:
+I recorded a user working in a shell.{macro_info}
+
+I need you to:
 1. Figure out what they were trying to accomplish
 2. Summarize the task in one sentence
 3. Determine what remains to be done to complete it
@@ -453,18 +459,11 @@ Shell transcript:
 {transcript[:4000]}
 
 Return ONLY a JSON object with these keys:
-- "task_summary": Brief description of what user was doing (e.g., "finding where test 45 failed using git bisect")
+- "task_summary": Brief description of what user was doing
 - "status": Current state (e.g., "in_progress", "ready_to_complete")
 - "completion_commands": Array of exact commands to finish the task
 - "explanation": What the remaining commands will do
-
-Example:
-{{
-  "task_summary": "finding where test 45 failed using git bisect",
-  "status": "in_progress", 
-  "completion_commands": ["git bisect good HEAD~2", "git bisect bad HEAD~3", "git bisect reset"],
-  "explanation": "The user started a bisect between good and bad commits, tested one version, now needs to mark remaining commits"
-}}"""
+"""
     
     if verbose:
         print(f"\nAnalyzing macro with AI...")
@@ -742,29 +741,27 @@ def handle_macro_command(args, config: dict):
 def main():
     parser = argparse.ArgumentParser(description="Run code from GitHub in one command (Haberdash)")
     
-    # Subparsers for commands
-    subparsers = parser.add_subparsers(dest="subcommand")
+    # We'll use a two-pass approach to support both positional URLs and subparsers
+    # or just handle the subcommand manually.
+    commands = ["macro", "config"]
+    if len(sys.argv) > 1 and sys.argv[1] in commands:
+        subparsers = parser.add_subparsers(dest="subcommand")
+        
+        # Macro management subcommand
+        macro_parser = subparsers.add_parser("macro", help="Manage macros")
+        macro_action_subparsers = macro_parser.add_subparsers(dest="macro_action")
+        macro_action_subparsers.add_parser("list", help="List available macros")
+        show_parser = macro_action_subparsers.add_parser("show", help="Show macro details")
+        show_parser.add_argument("name", help="Macro name")
+        delete_parser = macro_action_subparsers.add_parser("delete", help="Delete a macro")
+        delete_parser.add_argument("name", help="Macro name")
+        edit_parser = macro_action_subparsers.add_parser("edit", help="Edit a macro")
+        edit_parser.add_argument("name", help="Macro name")
+        
+        # Config management subcommand
+        subparsers.add_parser("config", help="Edit configuration file")
     
-    # Macro management subcommand
-    macro_parser = subparsers.add_parser("macro", help="Manage macros")
-    macro_action_subparsers = macro_parser.add_subparsers(dest="macro_action")
-    
-    macro_action_subparsers.add_parser("list", help="List available macros")
-    
-    show_parser = macro_action_subparsers.add_parser("show", help="Show macro details")
-    show_parser.add_argument("name", help="Macro name")
-    
-    delete_parser = macro_action_subparsers.add_parser("delete", help="Delete a macro")
-    delete_parser.add_argument("name", help="Macro name")
-    
-    edit_parser = macro_action_subparsers.add_parser("edit", help="Edit a macro")
-    edit_parser.add_argument("name", help="Macro name")
-    
-    # Config management subcommand
-    subparsers.add_parser("config", help="Edit configuration file")
-    
-    # The 'run' (default) arguments
-    # We'll also keep these at the top level for backward compatibility
+    # Common arguments
     parser.add_argument("url", nargs='?', help="GitHub repository URL or macro name")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
     parser.add_argument("--no-install", action="store_true", help="Skip installing dependencies")
@@ -779,8 +776,20 @@ def main():
     parser.add_argument("--chroot-root", default="/tmp/haberdash-chroot", help="Chroot root directory (default: /tmp/haberdash-chroot)")
     
     args = parser.parse_args()
-    
     config = get_config()
+    
+    # Handle subcommands if any
+    subcommand = getattr(args, 'subcommand', None)
+    if subcommand == "macro":
+        handle_macro_command(args, config)
+        return
+    
+    if subcommand == "config":
+        config_path = Path.home() / ".config" / "haberdash" / "config.toml"
+        editor = os.environ.get("EDITOR", "vim")
+        print(f"Opening {config_path} in {editor}...")
+        subprocess.run([editor, str(config_path)])
+        return
     
     # Handle top-level management flags
     if args.list:
@@ -849,17 +858,6 @@ def main():
                 print(f"Macro '{args.delete}' not found.")
         else:
             print("Cancelled.")
-        return
-
-    if args.subcommand == "macro":
-        handle_macro_command(args, config)
-        return
-    
-    if args.subcommand == "config":
-        config_path = Path.home() / ".config" / "haberdash" / "config.toml"
-        editor = os.environ.get("EDITOR", "vim")
-        print(f"Opening {config_path} in {editor}...")
-        subprocess.run([editor, str(config_path)])
         return
     
     # Handle the case where someone might do 'haby list' and it's not a URL/macro
